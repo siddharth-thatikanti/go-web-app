@@ -1,0 +1,47 @@
+name: Go Web App CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Run tests
+        run: go test ./...
+
+      - name: Build Go application
+        run: go build -o go-web-app .
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build Docker image
+        run: |
+          docker build -t siddharth-thatikanti/go-web-app:${{ github.sha }} .
+          docker tag siddharth-thatikanti/go-web-app:${{ github.sha }} siddharth-thatikanti/go-web-app:latest
+
+      - name: Push Docker image
+        run: |
+          docker push siddharth-thatikanti/go-web-app:${{ github.sha }}
+          docker push siddharth-thatikanti/go-web-app:latest
