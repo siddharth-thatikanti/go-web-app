@@ -37,11 +37,19 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build Docker image
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
         run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/go-web-app:${{ github.sha }} .
-          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/go-web-app:${{ github.sha }} ${{ secrets.DOCKERHUB_USERNAME }}/go-web-app:latest
+          image_owner="$(printf '%s' "$DOCKERHUB_USERNAME" | tr -d '\r\n' | xargs)"
+          image="$image_owner/go-web-app"
+          docker build -t "$image:${{ github.sha }}" .
+          docker tag "$image:${{ github.sha }}" "$image:latest"
 
       - name: Push Docker image
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
         run: |
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/go-web-app:${{ github.sha }}
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/go-web-app:latest
+          image_owner="$(printf '%s' "$DOCKERHUB_USERNAME" | tr -d '\r\n' | xargs)"
+          image="$image_owner/go-web-app"
+          docker push "$image:${{ github.sha }}"
+          docker push "$image:latest"
