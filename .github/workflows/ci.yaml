@@ -38,10 +38,10 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t siddharth-thatikanti/go-web-app:${{ github.sha }} .
-          docker tag siddharth-thatikanti/go-web-app:${{ github.sha }} siddharth-thatikanti/go-web-app:latest
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/go-web-app:${{ github.sha }} .
+          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/go-web-app:${{ github.sha }} ${{ secrets.DOCKERHUB_USERNAME }}/go-web-app:latest
 
       - name: Push Docker image
         run: |
-          docker push siddharth-thatikanti/go-web-app:${{ github.sha }}
-          docker push siddharth-thatikanti/go-web-app:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/go-web-app:${{ github.sha }}
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/go-web-app:latest
