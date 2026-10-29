@@ -31,8 +31,6 @@ jobs:
         run: go build -o go-web-app .
 
       - name: Log in to Docker Hub
-        id: docker_login
-        continue-on-error: true
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -44,7 +42,6 @@ jobs:
           docker tag siddharth-thatikanti/go-web-app:${{ github.sha }} siddharth-thatikanti/go-web-app:latest
 
       - name: Push Docker image
-        if: ${{ steps.docker_login.outcome == 'success' }}
         run: |
           docker push siddharth-thatikanti/go-web-app:${{ github.sha }}
           docker push siddharth-thatikanti/go-web-app:latest
